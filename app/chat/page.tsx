@@ -3,23 +3,21 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/user-context';
-import { Spinner } from '@/components/ui/spinner';
+import { ChatContainer } from '@/components/chat/chat-container';
 
-export default function Home() {
+export default function ChatPage() {
   const router = useRouter();
   const { preferences } = useUser();
 
   useEffect(() => {
-    if (preferences.hasCompletedOnboarding) {
-      router.replace('/chat');
-    } else {
+    if (!preferences.hasCompletedOnboarding) {
       router.replace('/onboarding');
     }
   }, [preferences.hasCompletedOnboarding, router]);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Spinner className="h-8 w-8 text-primary" />
-    </div>
-  );
+  if (!preferences.hasCompletedOnboarding) {
+    return null;
+  }
+
+  return <ChatContainer />;
 }
