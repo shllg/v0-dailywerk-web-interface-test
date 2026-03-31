@@ -30,9 +30,11 @@ export function OnboardingWizard({
   onComplete,
   onSkip,
 }: OnboardingWizardProps) {
-  const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === steps.length - 1;
-  const progress = ((currentStep + 1) / steps.length) * 100;
+  // Clamp currentStep to valid range to prevent undefined access
+  const safeCurrentStep = Math.min(Math.max(0, currentStep), steps.length - 1);
+  const isFirstStep = safeCurrentStep === 0;
+  const isLastStep = safeCurrentStep === steps.length - 1;
+  const progress = ((safeCurrentStep + 1) / steps.length) * 100;
 
   return (
     <Card className="w-full max-w-2xl border-border/50 bg-card/50 backdrop-blur">
@@ -52,9 +54,9 @@ export function OnboardingWizard({
           {/* Progress */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">{steps[currentStep].title}</span>
+              <span className="font-medium">{steps[safeCurrentStep].title}</span>
               <span className="text-muted-foreground">
-                Step {currentStep + 1} of {steps.length}
+                Step {safeCurrentStep + 1} of {steps.length}
               </span>
             </div>
             <Progress value={progress} className="h-1" />
@@ -67,14 +69,14 @@ export function OnboardingWizard({
                 key={step.id}
                 className={cn(
                   'flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors',
-                  index < currentStep
+                  index < safeCurrentStep
                     ? 'bg-primary text-primary-foreground'
-                    : index === currentStep
+                    : index === safeCurrentStep
                     ? 'bg-primary/20 text-primary border-2 border-primary'
                     : 'bg-muted text-muted-foreground'
                 )}
               >
-                {index < currentStep ? (
+                {index < safeCurrentStep ? (
                   <Check className="w-4 h-4" />
                 ) : (
                   index + 1
@@ -86,7 +88,7 @@ export function OnboardingWizard({
 
         {/* Content */}
         <div className="p-6 min-h-[400px]">
-          {steps[currentStep].content}
+          {steps[safeCurrentStep].content}
         </div>
 
         {/* Footer */}

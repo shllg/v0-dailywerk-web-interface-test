@@ -1,9 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Check } from 'lucide-react';
 import type { Tool } from '@/lib/types';
 import {
   Globe,
@@ -95,20 +95,34 @@ export function ChooseToolsStep({
                 const Icon = iconMap[tool.icon] || Settings;
                 const isSelected = selectedTools.includes(tool.id);
                 return (
-                  <button
+                  <div
                     key={tool.id}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => toggleTool(tool.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleTool(tool.id);
+                      }
+                    }}
                     className={cn(
-                      'w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all',
+                      'w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all cursor-pointer',
                       isSelected
                         ? 'border-primary bg-primary/5'
                         : 'border-border hover:border-border/80 hover:bg-muted/30'
                     )}
                   >
-                    <Checkbox
-                      checked={isSelected}
-                      className="shrink-0"
-                    />
+                    <div
+                      className={cn(
+                        'flex items-center justify-center w-5 h-5 rounded border shrink-0',
+                        isSelected
+                          ? 'bg-primary border-primary text-primary-foreground'
+                          : 'border-input bg-background'
+                      )}
+                    >
+                      {isSelected && <Check className="w-3 h-3" />}
+                    </div>
                     <div
                       className={cn(
                         'flex items-center justify-center w-8 h-8 rounded-md shrink-0',
@@ -130,7 +144,7 @@ export function ChooseToolsStep({
                         {tool.description}
                       </p>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
