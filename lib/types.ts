@@ -54,9 +54,10 @@ export interface Message {
   content: string;
   attachments?: Attachment[];
   toolCalls?: ToolCall[];
-  reasoning?: ReasoningStep[];
-  status?: MessageStatus;
-  createdAt: Date;
+  reasoning?: string; // Reasoning content as text
+  status?: MessageStatus | 'thinking';
+  timestamp: Date;
+  createdAt?: Date;
   isStreaming?: boolean;
 }
 
@@ -109,16 +110,28 @@ export interface Vault {
   isConnected: boolean;
 }
 
+export interface VaultFile {
+  id: string;
+  name: string;
+  path: string;
+  type: 'file' | 'folder';
+  content?: string;
+  tags?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Memory node for DAG visualization
 export interface MemoryNode {
   id: string;
   content: string;
-  category: 'project' | 'context' | 'preference' | 'fact' | 'instruction';
+  category: 'project' | 'context' | 'preference' | 'fact' | 'task';
   scope: 'shared' | 'private';
   agentId?: string; // Only for private scope
   importance: number; // 1-10
   confidence: number; // 0-1
-  connections: MemoryConnection[];
+  connections?: string[]; // Array of connected node IDs for simple graph rendering
+  connectionDetails?: MemoryConnection[]; // Full connection objects with weights
   source: 'extraction' | 'manual' | 'import';
   sessionId?: string;
   messageId?: string;

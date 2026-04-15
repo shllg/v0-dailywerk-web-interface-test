@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/user-context';
 import { TourOverlay } from '@/components/onboarding/tour-overlay';
 import { AppShell } from '@/components/layout/app-shell';
-import { ChatContainer } from '@/components/chat/chat-container';
+import { ChatView } from '@/components/chat/chat-view';
 
 export default function TourPage() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function TourPage() {
   return (
     <>
       <AppShell>
-        <ChatContainer />
+        <ChatView />
       </AppShell>
       <TourOverlay onComplete={handleTourComplete} onSkip={handleSkipTour} />
     </>

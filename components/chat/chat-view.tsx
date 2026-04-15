@@ -5,9 +5,8 @@ import { useAgents } from '@/contexts/agent-context';
 import { MessageBubble } from './message-bubble';
 import { ChatInput } from './chat-input';
 import { EmptyChat } from './empty-chat';
-import { TypingIndicator } from './typing-indicator';
-import { AgentPresence } from './agent-presence';
-import type { Message, ChatInputState } from '@/lib/types';
+import { AgentSwitcher } from './agent-switcher';
+import type { Message } from '@/lib/types';
 import { sampleMessages, suggestedPrompts } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 
@@ -18,15 +17,8 @@ interface ChatViewProps {
 export function ChatView({ agentId }: ChatViewProps) {
   const { agents, activeAgentId, setActiveAgentId } = useAgents();
   const [messages, setMessages] = useState<Message[]>(sampleMessages);
-  const [inputState, setInputState] = useState<ChatInputState>({
-    isRecording: false,
-    isThinking: false,
-    isToolRunning: false,
-    canSend: true,
-  });
-  const [showReasoning, setShowReasoning] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const currentAgentId = agentId || activeAgentId;
   const currentAgent = agents.find(a => a.id === currentAgentId) || agents[0];
@@ -34,10 +26,10 @@ export function ChatView({ agentId }: ChatViewProps) {
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isProcessing]);
 
-  const handleSendMessage = async (content: string, attachments?: File[]) => {
-    if (!content.trim() && !attachments?.length) return;
+  const handleSendMessage = async (content: string, options?: { reasoning?: boolean }) => {
+    if (!content.trim()) return;
 
     // Add user message
     const userMessage: Message = {
@@ -45,99 +37,141 @@ export function ChatView({ agentId }: ChatViewProps) {
       agentId: currentAgentId,
       role: 'user',
       content: content.trim(),
-      createdAt: new Date(),
+      timestamp: new Date(),
       status: 'sent',
     };
     setMessages(prev => [...prev, userMessage]);
 
     // Simulate AI thinking
-    setInputState(prev => ({ ...prev, isThinking: true, canSend: false }));
+    setIsProcessing(true);
 
-    // Simulate delay and response
+    // Simulate tool calls and response
     setTimeout(() => {
       const agentMessage: Message = {
         id: `msg-${Date.now() + 1}`,
         agentId: currentAgentId,
         role: 'agent',
-        content: `I understand you're asking about "${content.slice(0, 50)}${content.length > 50 ? '...' : ''}". Let me help you with that.\n\nThis is a simulated response from ${currentAgent?.name || 'the agent'}. In the real implementation, this would be powered by your AI backend.`,
-        createdAt: new Date(),
+        content: generateMockResponse(content, currentAgent?.name || 'Agent'),
+        timestamp: new Date(),
         status: 'sent',
+        reasoning: options?.reasoning 
+          ? `Let me think about this carefully. The user is asking about "${content.slice(0, 30)}...". I should consider multiple approaches and provide a thoughtful, helpful response that addresses their needs directly.`
+          : undefined,
+        toolCalls: content.toLowerCase().includes('search') || content.toLowerCase().includes('find')
+          ? [
+              { id: 'tc-1', name: 'web-search', status: 'completed', input: { query: content }, output: { results: 3 } },
+            ]
+          : content.toLowerCase().includes('calendar') || content.toLowerCase().includes('schedule')
+          ? [
+              { id: 'tc-2', name: 'calendar', status: 'completed', input: { action: 'check' }, output: { events: 2 } },
+            ]
+          : undefined,
       };
       setMessages(prev => [...prev, agentMessage]);
-      setInputState(prev => ({ ...prev, isThinking: false, canSend: true }));
-    }, 1500);
-  };
-
-  const handleSuggestedPrompt = (prompt: string) => {
-    handleSendMessage(prompt);
+      setIsProcessing(false);
+    }, 2000);
   };
 
   const handleStopGeneration = () => {
-    setInputState(prev => ({ ...prev, isThinking: false, canSend: true }));
-  };
-
-  const handleVoiceToggle = () => {
-    setInputState(prev => ({ ...prev, isRecording: !prev.isRecording }));
+    setIsProcessing(false);
   };
 
   const agentMessages = messages.filter(m => m.agentId === currentAgentId);
   const isEmpty = agentMessages.length === 0;
 
   return (
-    <div className="relative flex flex-col h-full bg-background overflow-hidden">
-      {/* Ambient background gradient */}
-      <div className="absolute inset-0 gradient-mesh pointer-events-none opacity-50" />
+    <div className="relative flex flex-col h-full overflow-hidden">
+      {/* Ambient background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+      </div>
       
-      {/* Agent presence indicator */}
-      <AgentPresence agent={currentAgent} />
+      {/* Header with agent switcher */}
+      <div className="relative z-10 flex items-center justify-between px-4 md:px-8 py-4 border-b border-white/[0.05]">
+        <AgentSwitcher 
+          currentAgent={currentAgent}
+          agents={agents}
+          onSelect={(id) => setActiveAgentId(id)}
+        />
+        
+        {/* Status indicator */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground/50">
+          <div className={cn(
+            'w-2 h-2 rounded-full',
+            isProcessing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'
+          )} />
+          <span>{isProcessing ? 'Thinking...' : 'Ready'}</span>
+        </div>
+      </div>
 
       {/* Messages area */}
-      <div 
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto scrollbar-hidden"
-      >
-        <div className="max-w-3xl mx-auto px-4 py-6 space-y-1">
+      <div className="flex-1 overflow-y-auto scrollbar-hidden relative z-0">
+        <div className="max-w-3xl mx-auto py-6 space-y-1">
           {isEmpty ? (
             <EmptyChat 
               agent={currentAgent}
               suggestedPrompts={suggestedPrompts}
-              onSelectPrompt={handleSuggestedPrompt}
+              onSelectPrompt={(prompt) => handleSendMessage(prompt)}
             />
           ) : (
             <>
-              {agentMessages.map((message, index) => (
+              {agentMessages.map((message) => (
                 <MessageBubble
                   key={message.id}
                   message={message}
-                  agent={currentAgent}
-                  showReasoning={showReasoning}
-                  isLast={index === agentMessages.length - 1}
+                  agentName={currentAgent?.name || 'Agent'}
                 />
               ))}
               
-              {inputState.isThinking && (
-                <TypingIndicator agent={currentAgent} />
+              {/* Thinking indicator */}
+              {isProcessing && (
+                <MessageBubble
+                  message={{
+                    id: 'thinking',
+                    agentId: currentAgentId,
+                    role: 'agent',
+                    content: '',
+                    timestamp: new Date(),
+                    status: 'thinking',
+                  }}
+                  agentName={currentAgent?.name || 'Agent'}
+                />
               )}
             </>
           )}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} className="h-4" />
         </div>
       </div>
 
       {/* Input area */}
-      <div className="relative z-10 p-4 pb-6">
-        <div className="max-w-3xl mx-auto">
-          <ChatInput
-            agent={currentAgent}
-            inputState={inputState}
-            showReasoning={showReasoning}
-            onSendMessage={handleSendMessage}
-            onStopGeneration={handleStopGeneration}
-            onVoiceToggle={handleVoiceToggle}
-            onReasoningToggle={() => setShowReasoning(!showReasoning)}
-          />
-        </div>
+      <div className="relative z-10">
+        <ChatInput
+          agentName={currentAgent?.name || 'Agent'}
+          isProcessing={isProcessing}
+          onSend={handleSendMessage}
+          onStop={handleStopGeneration}
+        />
       </div>
     </div>
   );
+}
+
+function generateMockResponse(input: string, agentName: string): string {
+  const lowerInput = input.toLowerCase();
+  
+  if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+    return `Hello! Great to hear from you. I'm ${agentName}, ready to help with whatever you need today.`;
+  }
+  
+  if (lowerInput.includes('search') || lowerInput.includes('find')) {
+    return `I searched for information related to your query. Here's what I found:\n\n**Key Results:**\n\n1. **Most relevant** - Found comprehensive documentation on this topic\n2. **Related content** - Several recent articles discuss similar themes\n3. **Additional resources** - Community discussions offer practical insights\n\nWould you like me to dive deeper into any of these?`;
+  }
+  
+  if (lowerInput.includes('calendar') || lowerInput.includes('schedule')) {
+    return `I checked your calendar. Here's your schedule:\n\n**Today:**\n- 10:00 AM - Team standup\n- 2:30 PM - Product review meeting\n\n**Tomorrow:**\n- 9:00 AM - Coffee with Sarah\n\nWould you like me to add or modify any events?`;
+  }
+  
+  return `I understand you're asking about "${input.slice(0, 50)}${input.length > 50 ? '...' : ''}". \n\nLet me help you with that. This is a thoughtful response that considers your question carefully. In a production environment, this would be powered by your AI backend and could include:\n\n- **Tool calls** to external services\n- **Memory recall** from past conversations\n- **Vault search** through your knowledge base\n\nIs there anything specific you'd like me to clarify?`;
 }

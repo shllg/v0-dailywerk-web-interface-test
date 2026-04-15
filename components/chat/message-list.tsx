@@ -1,51 +1,51 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import type { Message } from '@/lib/types';
+import type { Message, Agent } from '@/lib/types';
 import { MessageBubble } from './message-bubble';
-import { TypingIndicator } from './typing-indicator';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 interface MessageListProps {
   messages: Message[];
-  agentName: string;
-  isTyping: boolean;
+  agent: Agent;
+  isProcessing?: boolean;
 }
 
-export function MessageList({ messages, agentName, isTyping }: MessageListProps) {
+export function MessageList({ messages, agent, isProcessing }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
-
-  if (messages.length === 0 && !isTyping) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center max-w-md">
-          <h2 className="text-lg font-semibold mb-2">Start a conversation</h2>
-          <p className="text-sm text-muted-foreground">
-            Send a message to {agentName} and get started. You can ask questions,
-            give commands, or just have a conversation.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  }, [messages, isProcessing]);
 
   return (
-    <ScrollArea className="flex-1">
-      <div className="max-w-3xl mx-auto p-4 space-y-4 pb-20 md:pb-4">
+    <div className="flex-1 overflow-y-auto scrollbar-hidden">
+      <div className="max-w-3xl mx-auto py-8 space-y-1">
         {messages.map((message) => (
           <MessageBubble
             key={message.id}
             message={message}
-            agentName={agentName}
+            agentName={agent.name}
           />
         ))}
-        {isTyping && <TypingIndicator agentName={agentName} />}
-        <div ref={bottomRef} />
+        
+        {/* Thinking indicator as a message */}
+        {isProcessing && (
+          <MessageBubble
+            message={{
+              id: 'thinking',
+              agentId: agent.id,
+              role: 'agent',
+              content: '',
+              timestamp: new Date(),
+              status: 'thinking',
+            }}
+            agentName={agent.name}
+          />
+        )}
+        
+        <div ref={bottomRef} className="h-4" />
       </div>
-    </ScrollArea>
+    </div>
   );
 }

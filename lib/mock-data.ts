@@ -1,4 +1,4 @@
-import type { Agent, AgentTemplate, Message, Tool, Gateway, KnowledgeFile, Automation, MemoryNode, Vault, SuggestedPrompt } from './types';
+import type { Agent, AgentTemplate, Message, Tool, Gateway, KnowledgeFile, Automation, MemoryNode, Vault, SuggestedPrompt, VaultFile } from './types';
 
 // Agent Templates
 export const agentTemplates: AgentTemplate[] = [
@@ -706,3 +706,59 @@ const agent = await createAgent({
 });
 \`\`\`
 `;
+
+// Re-export with alternative names for convenience
+export const mockVaultFiles: VaultFile[] = [
+  {
+    id: 'vf-1',
+    name: 'Daily Note - 2026-04-15.md',
+    path: 'daily/2026/2026-04-15.md',
+    type: 'file',
+    content: sampleMarkdownContent,
+    tags: ['daily', 'notes'],
+    createdAt: new Date('2026-04-15'),
+    updatedAt: new Date('2026-04-15'),
+  },
+  {
+    id: 'vf-2',
+    name: 'Daily Note - 2026-04-14.md',
+    path: 'daily/2026/2026-04-14.md',
+    type: 'file',
+    content: '# Daily Note - 2026-04-14\n\nYesterday\'s notes...',
+    tags: ['daily', 'notes'],
+    createdAt: new Date('2026-04-14'),
+    updatedAt: new Date('2026-04-14'),
+  },
+  {
+    id: 'vf-3',
+    name: 'Project Ideas.md',
+    path: 'research/project-ideas.md',
+    type: 'file',
+    content: '# Project Ideas\n\n- DailyWerk improvements\n- New agent templates\n- Memory system enhancements',
+    tags: ['ideas', 'projects'],
+    createdAt: new Date('2026-04-10'),
+    updatedAt: new Date('2026-04-14'),
+  },
+  {
+    id: 'vf-4',
+    name: 'Meeting Notes.md',
+    path: 'work/meetings/meeting-notes.md',
+    type: 'file',
+    content: '# Meeting Notes\n\n## Sprint Planning\n\n- Discussed roadmap\n- Set priorities',
+    tags: ['work', 'meetings'],
+    createdAt: new Date('2026-04-12'),
+    updatedAt: new Date('2026-04-12'),
+  },
+  {
+    id: 'vf-5',
+    name: 'Reading List.md',
+    path: 'personal/reading-list.md',
+    type: 'file',
+    content: '# Reading List\n\n- [ ] The Pragmatic Programmer\n- [x] Designing Data-Intensive Applications\n- [ ] Clean Code',
+    tags: ['personal', 'books'],
+    createdAt: new Date('2026-03-01'),
+    updatedAt: new Date('2026-04-10'),
+  },
+];
+
+export const mockMemoryNodes: MemoryNode[] = sampleMemoryNodes;

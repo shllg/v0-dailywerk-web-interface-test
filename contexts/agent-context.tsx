@@ -7,9 +7,11 @@ import { defaultAgents, sampleMessages } from '@/lib/mock-data';
 interface AgentContextValue {
   agents: Agent[];
   currentAgent: Agent | null;
+  activeAgentId: string;
   messages: Message[];
   isTyping: boolean;
   setCurrentAgent: (agentId: string) => void;
+  setActiveAgentId: (agentId: string) => void;
   addAgent: (agent: Agent) => void;
   updateAgent: (agentId: string, updates: Partial<Agent>) => void;
   deleteAgent: (agentId: string) => void;
@@ -155,9 +157,11 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       value={{
         agents,
         currentAgent,
+        activeAgentId: currentAgent?.id || '',
         messages,
         isTyping,
         setCurrentAgent,
+        setActiveAgentId: setCurrentAgent,
         addAgent,
         updateAgent,
         deleteAgent,
