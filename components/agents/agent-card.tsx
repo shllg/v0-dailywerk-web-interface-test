@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { StatusIndicator } from '@/components/shared/status-indicator';
+
 import {
   MessageSquare,
   Settings,
@@ -68,7 +68,12 @@ export function AgentCard({ agent, viewMode }: AgentCardProps) {
               {agent.isConfidential && (
                 <Shield className="h-3.5 w-3.5 text-muted-foreground" />
               )}
-              <StatusIndicator status={agent.status} size="sm" />
+              <span className={cn(
+                'h-2 w-2 rounded-full',
+                agent.status === 'active' && 'bg-green-500 shadow-[0_0_6px_theme(colors.green.500)]',
+                agent.status === 'idle' && 'bg-amber-500',
+                agent.status === 'offline' && 'bg-muted-foreground/50'
+              )} />
             </div>
             <p className="text-sm text-muted-foreground truncate">
               {agent.description}
@@ -173,8 +178,14 @@ export function AgentCard({ agent, viewMode }: AgentCardProps) {
               <Shield className="h-3.5 w-3.5 text-muted-foreground" />
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <StatusIndicator status={agent.status} size="sm" showLabel />
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className={cn(
+              'h-2 w-2 rounded-full',
+              agent.status === 'active' && 'bg-green-500 shadow-[0_0_6px_theme(colors.green.500)]',
+              agent.status === 'idle' && 'bg-amber-500',
+              agent.status === 'offline' && 'bg-muted-foreground/50'
+            )} />
+            <span className="capitalize">{agent.status}</span>
           </div>
           <p className="text-sm text-muted-foreground line-clamp-2">
             {agent.description}
