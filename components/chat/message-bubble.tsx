@@ -157,7 +157,7 @@ export function MessageBubble({ message, agentName = 'Agent', agentAvatar }: Mes
           isUser ? 'justify-end' : 'justify-start'
         )}>
           <span className="text-[10px] text-muted-foreground/50 font-medium">
-            {formatTime(message.timestamp)}
+            {formatTime(message.timestamp || message.createdAt)}
           </span>
           
           {!isUser && !isThinking && (
@@ -250,6 +250,8 @@ function renderInlineFormatting(text: string): React.ReactNode {
   });
 }
 
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function formatTime(date: Date | undefined): string {
+  if (!date) return '';
+  const d = date instanceof Date ? date : new Date(date);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
