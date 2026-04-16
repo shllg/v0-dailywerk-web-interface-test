@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAgents } from '@/contexts/agent-context';
-import { Header } from '@/components/layout/header';
+import { PageHeader } from '@/components/shared/page-header';
 import { AgentForm } from '@/components/agents/agent-form';
 import { agentTemplates, availableTools } from '@/lib/mock-data';
 import type { Agent } from '@/lib/types';
@@ -36,10 +36,10 @@ export default function NewAgentPage() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <Header title="Create New Agent" showBack />
+    <div className="flex flex-col h-full bg-background">
+      <PageHeader title="Create New Agent" showBack />
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-6">
         <div className="max-w-2xl mx-auto">
           <AgentForm
             templates={agentTemplates}

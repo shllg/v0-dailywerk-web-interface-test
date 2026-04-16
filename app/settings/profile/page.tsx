@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Header } from '@/components/layout/header';
+import { PageHeader } from '@/components/shared/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { User, Camera, Save } from 'lucide-react';
+import { Camera, Save } from 'lucide-react';
 
 export default function ProfilePage() {
   const [name, setName] = useState('User');
@@ -18,20 +17,18 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate save
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSaving(false);
     toast.success('Profile updated');
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <Header title="Profile" showBack />
+    <div className="flex flex-col h-full bg-background">
+      <PageHeader title="Profile" showBack />
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-6">
         <div className="max-w-xl mx-auto space-y-6">
-          {/* Avatar */}
-          <Card>
+          <Card className="bg-white/[0.02] border-white/5">
             <CardHeader>
               <CardTitle className="text-base">Profile Picture</CardTitle>
             </CardHeader>
@@ -53,13 +50,10 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
 
-          {/* Details */}
-          <Card>
+          <Card className="bg-white/[0.02] border-white/5">
             <CardHeader>
               <CardTitle className="text-base">Personal Information</CardTitle>
-              <CardDescription>
-                Update your personal details
-              </CardDescription>
+              <CardDescription>Update your personal details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -69,6 +63,7 @@ export default function ProfilePage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
+                  className="bg-white/5 border-white/10"
                 />
               </div>
               <div className="space-y-2">
@@ -79,12 +74,12 @@ export default function ProfilePage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
+                  className="bg-white/5 border-white/10"
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Save */}
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={isSaving}>
               <Save className="h-4 w-4 mr-1" />
