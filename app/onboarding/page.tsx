@@ -40,7 +40,6 @@ export default function OnboardingPage() {
   };
 
   const handleComplete = () => {
-    // Create the main agent if it doesn't exist
     const mainAgentExists = agents.some(a => a.isMain);
     if (!mainAgentExists) {
       const template = agentTemplates.find(t => t.id === selectedTemplateId);
@@ -60,35 +59,11 @@ export default function OnboardingPage() {
       };
       addAgent(newAgent);
     }
-    
-    completeOnboarding();
-    router.push('/onboarding/tour');
-  };
-
-  const handleSkipTour = () => {
-    const mainAgentExists = agents.some(a => a.isMain);
-    if (!mainAgentExists) {
-      const template = agentTemplates.find(t => t.id === selectedTemplateId);
-      const newAgent: Agent = {
-        id: 'main-agent',
-        name: agentName,
-        description: template?.description || 'Your main assistant',
-        templateId: selectedTemplateId,
-        isMain: true,
-        isConfidential: false,
-        systemPrompt: template?.defaultPrompt || '',
-        tools: selectedTools,
-        knowledgePaths: [],
-        createdAt: new Date(),
-        lastUsedAt: new Date(),
-        status: 'online',
-      };
-      addAgent(newAgent);
-    }
-    
     completeOnboarding();
     router.push('/chat');
   };
+
+  const handleSkipTour = handleComplete;
 
   const steps = [
     {
