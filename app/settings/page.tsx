@@ -15,7 +15,6 @@ import {
   Wrench,
   Zap,
   Share2,
-  HelpCircle,
   RotateCcw,
   ChevronRight,
   Moon,
@@ -163,14 +162,6 @@ export default function SettingsPage() {
             <h2 className="text-xs font-medium text-white/40 uppercase tracking-wider px-1">Support</h2>
             <Card className="bg-white/[0.02] border-white/5">
               <CardContent className="p-4 space-y-2">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start h-11 rounded-xl text-white/60 hover:text-white hover:bg-white/5"
-                  onClick={() => router.push('/onboarding/tour')}
-                >
-                  <HelpCircle className="h-4 w-4 mr-3" />
-                  Take the Tour Again
-                </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start h-11 rounded-xl text-rose-400/70 hover:text-rose-400 hover:bg-rose-500/10"

@@ -50,9 +50,9 @@ export function CompleteStep({
 
       {/* Next Steps */}
       <div className="p-4 rounded-lg bg-muted/50 border border-border/50 max-w-sm mx-auto">
-        <h3 className="font-medium mb-2">What&apos;s next?</h3>
+        <h3 className="font-medium mb-2">You&apos;re all set.</h3>
         <p className="text-sm text-muted-foreground">
-          Take a quick tour to learn the basics, or jump straight into chatting with {agentName}. You can always access the tour later from settings.
+          Jump straight into chatting with {agentName}. Add more agents, tools, and gateways any time from the settings.
         </p>
       </div>
     </div>
