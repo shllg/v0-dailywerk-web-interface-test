@@ -186,6 +186,9 @@ export function MessageBubble({ message, agentName = 'Agent', agentAvatar }: Mes
 }
 
 function MessageContent({ content }: { content: string }) {
+  if (!content || typeof content !== 'string') {
+    return null;
+  }
   const lines = content.split('\n');
   
   return (

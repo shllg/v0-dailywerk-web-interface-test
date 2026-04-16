@@ -1,11 +1,9 @@
 'use client';
 
 import { useUser } from '@/contexts/user-context';
-import { Header } from '@/components/layout/header';
+import { PageHeader } from '@/components/shared/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
@@ -28,18 +26,15 @@ export default function AppearancePage() {
   const { preferences, updatePreferences } = useUser();
 
   return (
-    <div className="flex flex-col h-full">
-      <Header title="Appearance" showBack />
+    <div className="flex flex-col h-full bg-background">
+      <PageHeader title="Appearance" showBack />
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-6">
         <div className="max-w-xl mx-auto space-y-6">
-          {/* Theme */}
-          <Card>
+          <Card className="bg-white/[0.02] border-white/5">
             <CardHeader>
               <CardTitle className="text-base">Theme</CardTitle>
-              <CardDescription>
-                Select your preferred color scheme
-              </CardDescription>
+              <CardDescription>Select your preferred color scheme</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-3">
@@ -51,10 +46,10 @@ export default function AppearancePage() {
                       key={theme.id}
                       onClick={() => updatePreferences({ theme: theme.id })}
                       className={cn(
-                        'flex flex-col items-center gap-2 p-4 rounded-lg border transition-all',
+                        'flex flex-col items-center gap-2 p-4 rounded-xl border transition-all',
                         isSelected
-                          ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                          : 'border-border hover:border-primary/50'
+                          ? 'border-primary bg-primary/10 ring-1 ring-primary'
+                          : 'border-white/10 hover:border-primary/50 bg-white/[0.02]'
                       )}
                     >
                       <Icon className="h-6 w-6" />
@@ -66,13 +61,10 @@ export default function AppearancePage() {
             </CardContent>
           </Card>
 
-          {/* Accent Color */}
-          <Card>
+          <Card className="bg-white/[0.02] border-white/5">
             <CardHeader>
               <CardTitle className="text-base">Accent Color</CardTitle>
-              <CardDescription>
-                Choose your primary accent color
-              </CardDescription>
+              <CardDescription>Choose your primary accent color</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -96,17 +88,16 @@ export default function AppearancePage() {
             </CardContent>
           </Card>
 
-          {/* Sidebar */}
-          <Card>
+          <Card className="bg-white/[0.02] border-white/5">
             <CardHeader>
-              <CardTitle className="text-base">Sidebar</CardTitle>
+              <CardTitle className="text-base">Navigation</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <Label>Collapsed by default</Label>
+                  <Label>Dock auto-hide</Label>
                   <p className="text-sm text-muted-foreground">
-                    Start with a compact sidebar on desktop
+                    Hide the navigation dock until you hover
                   </p>
                 </div>
                 <Switch

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useUser } from '@/contexts/user-context';
 import { useAgents } from '@/contexts/agent-context';
-import { ChatContainer } from '@/components/chat/chat-container';
+import { ChatView } from '@/components/chat/chat-view';
 
 export default function AgentChatPage() {
   const router = useRouter();
@@ -34,5 +34,5 @@ export default function AgentChatPage() {
     return null;
   }
 
-  return <ChatContainer />;
+  return <ChatView />;
 }

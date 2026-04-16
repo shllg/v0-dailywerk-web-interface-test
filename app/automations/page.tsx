@@ -2,14 +2,13 @@
 
 import { useState } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
-import { Header } from '@/components/layout/header';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageHeader } from '@/components/shared/page-header';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EmptyState } from '@/components/shared/empty-state';
 import { sampleAutomations } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import {
@@ -21,7 +20,6 @@ import {
   Calendar,
   MoreVertical,
   Play,
-  Pause,
   Trash2,
 } from 'lucide-react';
 import {
@@ -76,7 +74,7 @@ export default function AutomationsPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-full">
-        <Header
+        <PageHeader
           title="Automations"
           subtitle="Crons, reminders, and todos"
           actions={
@@ -87,13 +85,13 @@ export default function AutomationsPage() {
           }
         />
 
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto space-y-4">
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-4 bg-white/5">
                 <TabsTrigger value="all" className="gap-1">
                   All
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs bg-white/10">
                     {counts.all}
                   </Badge>
                 </TabsTrigger>
@@ -113,18 +111,21 @@ export default function AutomationsPage() {
 
               <TabsContent value={activeTab} className="mt-4 space-y-3">
                 {filteredAutomations.length === 0 ? (
-                  <EmptyState
-                    icon={Zap}
-                    title={`No ${activeTab === 'all' ? 'automations' : activeTab + 's'} yet`}
-                    description="Create your first automation to get started"
-                    action={
-                      <Button>
-                        <Plus className="h-4 w-4 mr-1" />
-                        Create {activeTab === 'all' ? 'Automation' : typeConfig[activeTab as keyof typeof typeConfig]?.label}
-                      </Button>
-                    }
-                    className="py-12"
-                  />
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+                      <Zap className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      No {activeTab === 'all' ? 'automations' : activeTab + 's'} yet
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Create your first automation to get started
+                    </p>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-1" />
+                      Create {activeTab === 'all' ? 'Automation' : typeConfig[activeTab as keyof typeof typeConfig]?.label}
+                    </Button>
+                  </div>
                 ) : (
                   filteredAutomations.map((auto) => {
                     const config = typeConfig[auto.type];
@@ -136,7 +137,7 @@ export default function AutomationsPage() {
                       <Card
                         key={auto.id}
                         className={cn(
-                          'transition-all',
+                          'bg-white/[0.02] border-white/5 transition-all hover:bg-white/[0.04]',
                           isTodo && auto.isCompleted && 'opacity-60'
                         )}
                       >
@@ -149,22 +150,20 @@ export default function AutomationsPage() {
                                 className="mt-1"
                               />
                             ) : (
-                              <div className={cn('p-2 rounded-lg bg-muted', config.color)}>
+                              <div className={cn('p-2 rounded-lg bg-white/5', config.color)}>
                                 <Icon className="h-4 w-4" />
                               </div>
                             )}
 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <h3
-                                  className={cn(
-                                    'font-medium',
-                                    isTodo && auto.isCompleted && 'line-through text-muted-foreground'
-                                  )}
-                                >
+                                <h3 className={cn(
+                                  'font-medium',
+                                  isTodo && auto.isCompleted && 'line-through text-muted-foreground'
+                                )}>
                                   {auto.name}
                                 </h3>
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-xs border-white/10">
                                   {config.label}
                                 </Badge>
                                 {isOverdue && (

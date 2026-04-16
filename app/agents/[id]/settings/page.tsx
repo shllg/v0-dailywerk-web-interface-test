@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAgents } from '@/contexts/agent-context';
-import { Header } from '@/components/layout/header';
 import { AgentForm } from '@/components/agents/agent-form';
 import { agentTemplates, availableTools } from '@/lib/mock-data';
-import { EmptyState } from '@/components/shared/empty-state';
-import { Bot } from 'lucide-react';
+import { ArrowLeft, Bot } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { Agent } from '@/lib/types';
 
 export default function AgentSettingsPage() {
@@ -27,22 +26,32 @@ export default function AgentSettingsPage() {
 
   if (!agent) {
     return (
-      <div className="flex flex-col h-full">
-        <Header title="Agent Settings" showBack />
-        <div className="flex-1 flex items-center justify-center">
-          <EmptyState
-            icon={Bot}
-            title="Agent not found"
-            description="The agent you're looking for doesn't exist."
-          />
+      <div className="flex flex-col h-full bg-background">
+        <header className="flex items-center gap-4 p-4 border-b border-white/5">
+          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-lg font-semibold">Agent Settings</h1>
+        </header>
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+            <Bot className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Agent not found</h2>
+          <p className="text-muted-foreground">The agent you&apos;re looking for doesn&apos;t exist.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <Header title={`${agent.name} Settings`} showBack />
+    <div className="flex flex-col h-full bg-background">
+      <header className="flex items-center gap-4 p-4 border-b border-white/5">
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <h1 className="text-lg font-semibold">{agent.name} Settings</h1>
+      </header>
 
       <div className="flex-1 overflow-auto p-4">
         <div className="max-w-2xl mx-auto">
