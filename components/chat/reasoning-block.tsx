@@ -17,8 +17,11 @@ interface ReasoningBlockProps {
 export function ReasoningBlock({ content, className }: ReasoningBlockProps) {
   const [isOpen, setIsOpen] = useState(false);
   
+  // Ensure content is a string
+  const textContent = typeof content === 'string' ? content : String(content || '');
+  
   // Count words for summary
-  const wordCount = content.split(/\s+/).length;
+  const wordCount = textContent ? textContent.split(/\s+/).length : 0;
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className={className}>
@@ -57,7 +60,7 @@ export function ReasoningBlock({ content, className }: ReasoningBlockProps) {
           {/* Decorative quote mark */}
           <div className="text-4xl text-amber-500/20 font-serif leading-none mb-1">"</div>
           <div className="pl-4 -mt-4">
-            {content}
+            {textContent}
           </div>
         </div>
       </CollapsibleContent>
